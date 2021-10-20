@@ -1,17 +1,68 @@
 filebeat.inputs:
 - type: log
   paths:
-    - /usr/log/serverlogs/*.log
+    - /var/log/serverlogs/*.log
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      #processors:
+        #  - add_cloud_metadata: ~
+        #   host: "unix:///run/docker.sock"
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
+  index: "filebeat-%{[beat.version]}-%{+yyyy.MM.dd}"
+
 
 setup.template.name: "filebeat-"
 setup.template.pattern: "filebeat-*"
 setup.dashboards.enabled: true
 
-setup.kibana:
-  hosts: '${KIBANA_HOSTS:kibana:5601}'
-  username: elastic
-  password: changeme%
 
-output.elasticsearch:
-  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
-  index: "filebeat-%{[beat.version]}-%{+yyyy.MM.dd}"
+
+# filebeat.modules:
+# - module: elasticsearch
+#   server:
+#     enabled: true
+# - module: kibana
+#   log:
+#     enabled: true
+# filebeat.inputs:
+# - type: log
+#   enabled: true
+#   paths:
+#     - /usr/log/serverlogs/*.log
+
+# filebeat.config.modules:
+#   path: ${path.config}/modules.d/*.yml
+#   reload.enabled: true
+
+# setup.template.name: "filebeat-"
+# setup.template.pattern: "filebeat-*"
+# setup.dashboards.enabled: true
+# setup.kibana.host: "http://localhost:5601"
+
+# output.elasticsearch:
+#   hosts: ["elasticsearch:9200"]
+#   index: 'filebeat-%{[beat.version]}-%{+yyyy.MM.dd}'
+
+# filebeat.autodiscover:
+#   providers:
+#     - type: docker
+#       hints.enabled: true
+# filebeat.config:
+#   modules:
+#     path: ${path.config}/modules.d/*.yml
+#     reload.enabled: false
+
+# filebeat.autodiscover:
+#   providers:
+#     - type: docker
+#       hints.enabled: true
+
+# processors:
+# - add_cloud_metadata: ~
+
+# output.elasticsearch:
+#   hosts: '${ELASTICSEARCH_HOSTS:172.18.0.2:9200}'
+  

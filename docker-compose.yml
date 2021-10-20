@@ -4,26 +4,17 @@ services:
     image: nginx
     volumes:
       - /var/log/serverlogs:/var/log/nginx
+    ports:
+       - 8080:80
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.14.2
     volumes:
      - /home/sigmoid/shree/docker/docker-project/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+     - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.14.2
-    command: filebeat -e -strict.perms=false
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      KIBANA_HOSTS: http://kibana:5601
-    volumes:
-      - /home/sigmoid/shree/docker/docker-project/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/log/serverlogs:/usr/share/filebeat/logs
-    links:
-       - elasticsearch
-       - kibana
   kibana:
     image: docker.elastic.co/kibana/kibana:7.14.2
     environment:
@@ -37,3 +28,19 @@ services:
       - elasticsearch
     links:
       - elasticsearch
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.14.2
+    user: root
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - /home/sigmoid/shree/docker/docker-project/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /logs/serverlogs/:/var/log/nginx/
+    links:
+       - elasticsearch
+       - kibana
+    depends_on:
+       - nginx
+volumes:
+    elasticsearch_data:

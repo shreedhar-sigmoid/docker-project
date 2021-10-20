@@ -1,1 +1,3 @@
-FROM nginx
+FROM nginx 
+
+VOLUME var/log/serverlogs
