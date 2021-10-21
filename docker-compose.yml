@@ -36,7 +36,7 @@ services:
       - /home/sigmoid/shree/docker/docker-project/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /logs/serverlogs/:/var/log/nginx/
+      - /var/log/serverlogs/:/var/log/nginx/
     links:
        - elasticsearch
        - kibana
